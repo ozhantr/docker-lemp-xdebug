@@ -1,0 +1,36 @@
+version: "3.1"
+services:
+
+    mysql:
+      image: mysql:5.7
+      container_name: ozhan-mysql
+      working_dir: /app
+      volumes:
+        - .:/app
+      environment:
+        - MYSQL_ROOT_PASSWORD=12
+        - MYSQL_DATABASE=test_app
+        - MYSQL_USER=test
+        - MYSQL_PASSWORD=test
+      ports:
+        - "8082:3306"
+
+    webserver:
+      image: nginx:alpine
+      container_name: ozhan-webserver
+      working_dir: /app
+      volumes:
+          - .:/app
+          - ./config/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "8080:80"
+
+    php-fpm:
+      build: config/php-fpm
+      container_name: ozhan-php-fpm
+      working_dir: /app
+      volumes:
+        - .:/app
+        - ./config/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+        - ./config/php-fpm/xdebug-ini-overrides.ini:/etc/php/7.2/cli/conf.d/20-xdebug.ini
+
